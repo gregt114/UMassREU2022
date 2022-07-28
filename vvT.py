@@ -5,6 +5,7 @@ from numba import jit
 
 from methods.eigengame import EigenGame
 from methods.utils import find_eigenvalues
+from methods.sequential_EG import EigenGame as EG2
 
 import time
 
@@ -42,8 +43,8 @@ def F(V):
 def main():
 
     k = 3
-    rho = 1e-7 # 1e-7 works good I think
-    alpha = 0.01
+    rho = 1e-6 # 1e-7 works good I think
+    alpha = 0.0005
 
 
     # Initial guess
@@ -53,6 +54,7 @@ def main():
         xs**2 * np.exp(-OMEGA * xs**2 / 2)
     ]
     V = np.array(V).T
+    V = np.random.rand(n, k)
 
 
     # Loop setup
@@ -64,12 +66,14 @@ def main():
     for state in range(0, k):
         guess = V.T[state]
         old = 10*guess # dummy val to get into loop
-        while np.linalg.norm(guess - old) > TOL:
+        for i in range(4):#while np.linalg.norm(guess - old) > TOL:
             old = guess
             M = F(V)
 
-            eigVecs = EigenGame(M, k, rho, alpha) # issue is that we need all eigenvectors, not just first k?
-            # eigVals, eigVecs = eigh(M)
+            #eigVecs = EigenGame(M, k, rho, alpha) # issue is that we need all eigenvectors, not just first k?
+            #eigVecs = EG2(M, k, rho, alpha, mod=2, order='small') # sequential EG
+            #eigVals, eigVecs = eigh(M)
+            #eigVecs = eigVecs[:, 0:k]
 
 
             guess = eigVecs.T[state]
@@ -77,6 +81,7 @@ def main():
 
             print(f"{iteration}: {np.linalg.norm(guess - old)}")
             iteration += 1
+        print(f'Done {state}')
         evals.append( find_eigenvalues(F(V), V)[state] )
     print(f"Time: {time.time() - start}")
 
