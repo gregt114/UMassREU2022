@@ -62,7 +62,7 @@ def EigenGame(M, k, rho, alpha, mod=1, order='small'):
     eigVecs = rand(M.shape[0], k)
 
     if order == 'small':
-        M = (eigvalsh(M).max()*1.2) * np.eye(M.shape[0]) - M
+        M = (eigvalsh(M).max()*1.5) * np.eye(M.shape[0]) - M
     
 
     for i in range(0, k):
@@ -74,8 +74,8 @@ def EigenGame(M, k, rho, alpha, mod=1, order='small'):
 
 def main():
     
-    n = 4
-    k = 4
+    n = 100
+    k = 100
 
     rho = 1e-6
     alpha = 0.01
@@ -100,14 +100,14 @@ def main():
 
         print("EigenGame Results")
         start = time.time()
-        v1 = EigenGame(M, k, rho, alpha, mod=1, order='small')
+        v1 = EigenGame(M, k, rho, alpha, mod=1, order='large')
         end = time.time()
         print(v1)
         print()
 
         print("Actual Answer")
         vals, vecs = eigh(M)
-        #vecs = vecs.T[::-1].T
+        vecs = vecs.T[::-1].T
         vecs = vecs[:, 0:k]
 
         print(vecs)

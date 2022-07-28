@@ -13,7 +13,7 @@ import time
 
 OMEGA = 0.2
 TOL = 1e-6 # Convergence difference for solution
-n = 150 # n needs to be around 500 for accurate eigenvalues
+n = 40 # n needs to be around 500 for accurate eigenvalues
 
 x0 = -14
 xf = 14
@@ -42,7 +42,7 @@ def F(V):
 
 def main():
 
-    k = 3
+    k = 40
     rho = 1e-6 # 1e-7 works good I think
     alpha = 0.0005
 
@@ -63,15 +63,15 @@ def main():
     evals = []
 
     start = time.time()
-    for state in range(0, k):
+    for state in range(0, 3):
         guess = V.T[state]
         old = 10*guess # dummy val to get into loop
-        for i in range(4):#while np.linalg.norm(guess - old) > TOL:
+        while np.linalg.norm(guess - old) > 0.01:
             old = guess
             M = F(V)
 
-            #eigVecs = EigenGame(M, k, rho, alpha) # issue is that we need all eigenvectors, not just first k?
-            #eigVecs = EG2(M, k, rho, alpha, mod=2, order='small') # sequential EG
+            #eigVecs = EigenGame(M, k, rho, alpha) # TODO: issue is that we need all eigenvectors, not just first k?
+            eigVecs = EG2(M, k, rho, alpha, mod=20, order='small') # sequential EG
             #eigVals, eigVecs = eigh(M)
             #eigVecs = eigVecs[:, 0:k]
 
@@ -90,7 +90,7 @@ def main():
 
     plt.figure(figsize=[12,5])
     plotnum = 1
-    for i in range(k):
+    for i in range(3):
         plt.subplot(1,3,plotnum)
         plt.plot(xs, V.T[i])
         lamb = evals[i]

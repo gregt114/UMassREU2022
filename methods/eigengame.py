@@ -60,7 +60,7 @@ def solve(name, shape, i, M, alpha, rho):
 def EigenGame(M, k, rho, alpha, order='small'):
     
     if order == 'small':
-        M = (eigvalsh(M).max()*1.2) * np.eye(M.shape[0]) - M
+        M = (eigvalsh(M).max()*1.5) * np.eye(M.shape[0]) - M
     
     M = np.ascontiguousarray(np.array(M))
 
