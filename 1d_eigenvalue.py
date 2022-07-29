@@ -4,19 +4,21 @@ from numba import jit
 
 import time
 
-from methods.eigenvalue import iterate_eig
+from methods.eigenvalue import iterate_eig_full
 from methods.utils import norm1D as norm
 
-
+# Parameters
 OMEGA = 0.2
 TOL = 1e-8 # Convergence difference for solution
 n = 500
-k = 6
+k = 6 # how many eigenvectors to find
 
+# Domain to solve over
 x0 = -14
 xf = 14
 dx = (xf - x0) / n
 xs = np.linspace(x0, xf, n)
+
 
 @jit(nopython=True)
 def matrix(u):
@@ -44,9 +46,9 @@ def main():
     guess = np.exp(-OMEGA * xs**2 / 2)
 
     start = time.time()
-    eigVals, eigVecs = iterate_eig(matrix, guess, TOL, k, method='numpy')
+    eigVals, eigVecs = iterate_eig_full(matrix, guess, TOL, k, method='numpy')
     end = time.time()
-    print(f"TIme: {end - start}")
+    print(f"Time: {end - start}")
 
 
     # Check norms of solutions (should all be == dx)
