@@ -6,26 +6,28 @@ from methods.newton import newton
 
 import time
 
+
+# Parameters
+n = 150
+OMEGA = 0.2
+MU = 1
+TOL = 1e-5
+bc = 0 # Bondary Condition
+
+
+# Grid to solve over
 x0 = -14
 xf = 14
-
 y0 = -14
 yf = 14
-
-n = 150
-
 dx = (xf - x0) / n
 dy = (yf - y0) / n
 xs = np.linspace(x0, xf, n)
 ys = np.linspace(y0, yf, n)
 X, Y = np.meshgrid(xs, ys)
 
-OMEGA = 0.2
-MU = 1
 
-# Bondary Conditions
-bc = 0
-# -------------
+
 
 @jit(nopython=True)
 def f(v):
@@ -59,11 +61,9 @@ def main():
 
     """
 
-    TOL = 1e-5
-
     
     # Guesses
-    guess0 = np.exp(-OMEGA*X**2 /100) * np.exp(-OMEGA * Y**2 / 2)  
+    guess0 = np.exp(-OMEGA*X**2 /100) * np.exp(-OMEGA * Y**2 / 2) # ground state
     
     vortex1 = (X + 1j*Y) * np.exp(-OMEGA * (X**2 + Y**2) / 2) # single vortex
 
@@ -72,7 +72,7 @@ def main():
     
 
     # Reshape guess
-    guess = blobs2
+    guess = vortex1
     guess = guess.reshape(1, -1)[0]
 
     
@@ -83,14 +83,14 @@ def main():
     print(f"Time: {end - start}")
     print(f"Max Residual: {np.abs(f(soln)).max()}")
 
-    # Reshape guess and soln for plotting
+    # Reshape guess and solution for plotting
     guess = guess.reshape(n,n)
     guess = np.abs(guess)**2
 
     soln = soln.reshape(n,n)
     soln = np.abs(soln)**2
 
-
+    # Plot
     cmap = "hot"
     plt.figure(figsize=[10,6])
     plt.subplot(1,2,1)
