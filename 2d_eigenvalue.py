@@ -13,27 +13,27 @@ from methods.eigenvalue import iterate_eig
 import time
 
 
-x0 = -8
-xf = 8
-
-y0 = -8
-yf = 8
-
+# Parameters
 n = 100
 N =  n**2
+OMEGA = 0.2
+TOL = 1e-4
+bc = 0 # Bondary Condition
 
+
+# Grid to solver over
+x0 = -8
+xf = 8
+y0 = -8
+yf = 8
 dx = (xf - x0) / n
 dy = (yf - y0) / n
 xs = np.linspace(x0, xf, n)
 ys = np.linspace(y0, yf, n)
 X, Y = np.meshgrid(xs, ys)
 
-OMEGA = 0.2
 
-# Bondary Conditions
-bc = 0
-# -------------
-
+# Construct the matrix using a given eigenvector guess
 def matrix(v):
     dxs = -1/(2*dx**2) * np.ones(N - 1)
     dys = -1/(2*dy**2) * np.ones(N-n)
@@ -55,15 +55,15 @@ def matrix(v):
 
 def main():
 
-    TOL = 1e-4
-    k = 3
-    state = 0 # state to solve for (for some reason state 1 is extremely slow)
+    k = 3 # number of eigenvectors to find
+    state = 0 # state to solve for
 
-    guess0 = np.exp(-OMEGA * (X**2 + Y**2) / 2)
-    guess1 = Y * np.exp(-OMEGA * (X**2 + Y**2) / 2)
-
-
-    guess = guess1
+    # Guesses
+    guesses = {
+        0: np.exp(-OMEGA * (X**2 + Y**2) / 2), # ground state
+        1: Y * np.exp(-OMEGA * (X**2 + Y**2) / 2), # 1st excited
+    }
+    guess = guesses[state]
     guess = guess.reshape(1, -1)[0]
     
 
@@ -74,6 +74,7 @@ def main():
     print(f"Time: {end - start}")
 
 
+    # Setup for plotting
     plt.figure(figsize=[11,6])
     soln = eigVecs.T[state].reshape(n, n)
     soln = np.abs(soln)**2
