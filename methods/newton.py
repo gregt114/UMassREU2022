@@ -7,6 +7,16 @@ from scipy.optimize import newton_krylov
 
 
 def newton(func, guess, tol, method, jac=None, verbose=False):
+    """
+    Solve the equation func(x) = 0 for x
+    
+    func: the function to find the root of
+    guess: the initial guess
+    tol: how large the residual should be at the end of iteration
+    method: what solver to use
+    jac: function that returns value of jacobian evaluated at x
+    verbose: whether to print residual at each iteration or not
+    """
     if method == 'numpy':
         if jac == None: raise ArgumentError(f'Jacobian must be specified for method {method}')
         return _newton_np(func, guess, tol, jac, verbose)
@@ -31,7 +41,6 @@ def _newton_np(func, guess, tol, jac, verbose):
 
 
 def _newton_complex(f, guess, tol, verbose):
-    
     # Wrapper function
     def func(v2n):
         # Create complex vector of size n
@@ -49,7 +58,7 @@ def _newton_complex(f, guess, tol, verbose):
     return soln[0:len(soln)//2] + 1j*soln[len(soln)//2:] # reassemble complex solution
 
 
-
+# Test that solver works
 def main():
 
     def f_np(v):
