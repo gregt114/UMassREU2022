@@ -8,9 +8,12 @@ from methods.utils import norm1D as norm
 from numba import jit
 
 
+# Parameters
 OMEGA = 0.2
+TOL = 1e-3
 n = 200
 
+# Domain to solve over
 x0 = -14
 xf = 14
 dx = (xf - x0) / n
@@ -41,18 +44,19 @@ def matrix(u, p):
 
 def main():
 
-    TOL = 1e-3 # lower tolerance = earlier stop
-    k = 3
+    k = 3 # number of eigenvectors to find
 
+    # Norms to solve over
     p0 = 0
     pf = 1
     n_p = 40
     ps = np.linspace(p0, pf, n_p)
 
+    
+    # Initial guesses for each branch
     guess0 = np.exp(-OMEGA*xs**2 / 2)
     guess1 = xs * np.exp(-OMEGA*xs**2 / 2)
     guess2 = xs**2 * np.exp(-OMEGA*xs**2 / 2)
-
     gs = [guess0, guess1, guess2]
 
 
@@ -66,7 +70,7 @@ def main():
             
             data[state].append(eigVals[state])
 
-            print(eigVals[state], p)
+            print(f'mu = {eigVals[state]}     norm={p}')
         print(f"Done {state}")
 
 
