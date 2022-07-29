@@ -6,6 +6,9 @@ from scipy.integrate import simps
 from numba import jit
 import matplotlib.pyplot as plt
 
+"""
+Helper functions for the programs
+"""
 
 @jit(nopython=True)
 def norm1D(arr, dx):
@@ -28,4 +31,7 @@ def norm2D(arr, xs, ys):
 
 
 def find_eigenvalues(M, V):
+    """
+    Finds eigenvalues of M using eigenvectors given by V
+    """
     return np.diag(M.dot(V) / V )
