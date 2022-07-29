@@ -11,31 +11,31 @@ from scipy.optimize import newton_krylov
 from scipy.sparse import diags
 
 
+# Parameters
+n = 100
+OMEGA = 0.2
+MU = 0.65
+TOL = 1e-8
+bc = 0 # Bondary Condition
 
+
+# Grid to solve over
 x0 = -14
 xf = 14
-
 y0 = -14
 yf = 14
-
-n = 100
-
 dx = (xf - x0) / n
 dy = (yf - y0) / n
 xs = np.linspace(x0, xf, n)
 ys = np.linspace(y0, yf, n)
 X, Y = np.meshgrid(xs, ys)
 
-OMEGA = 0.2
-MU = 0.65
 
-# Bondary Conditions
-bc = 0
-# -------------
+
 
 @jit(nopython=True)
 def f(v):
-    ret = np.zeros_like(v, dtype=np.float64) # TODO: Maybe use my newton with complex for everything? set dtype complex128
+    ret = np.zeros_like(v, dtype=np.float64)
 
     for i in range(n**2):
         beforeX = v[i-1] if i > 0 else bc
@@ -60,8 +60,6 @@ def f(v):
 
 import time
 def main():
-
-    TOL = 1e-8
 
     # Guesses
     guess0 = np.exp(-OMEGA * (X**2 + Y**2) / 2)
