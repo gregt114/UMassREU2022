@@ -11,15 +11,16 @@ from scipy.optimize import newton_krylov, root
 import time
 
 
-
+# Domain to solve over
 x0 = -24
 xf = 24
 n = 450
 xs = np.linspace(x0, xf, n)
 dx = (xf - x0) / n
 
+# Parameters
 OMEGA = 0.2
-
+TOL = 1e-5
 bc = 0 # Bondary Conditions
 
 
@@ -37,6 +38,7 @@ def f(v, mu):
 
     return res
 
+
 @jit(nopython=True)
 def jac(v, mu):
     res = np.zeros((n,n))
@@ -53,24 +55,22 @@ def jac(v, mu):
 
 
 
-
+# Values of mu to solve over
 mu0 = 1
 muf = 0
 n_mu = 200
 mus = np.linspace(mu0, muf, n_mu)
 
-TOL = 1e-5
 
-
+# Initial guesses for each branch
 guess0 = np.exp(-OMEGA*xs**2 / 2)
 guess1 = 0.5*xs * np.exp(-OMEGA*xs**2 / 2)
-guess2 = 0.18*(xs**2 - 0.333**2) * np.exp(-OMEGA * xs**2 / 2)  # but n >= 400
-guess3 = (0.1*xs**3 - 0.75*xs) * np.exp(-OMEGA * xs**2 / 2)  # but n >= 400
+guess2 = 0.18*(xs**2 - 0.333**2) * np.exp(-OMEGA * xs**2 / 2)  # need n >= 400
+guess3 = (0.1*xs**3 - 0.75*xs) * np.exp(-OMEGA * xs**2 / 2)  # need n >= 400
 guess4 = (0.02*xs**4 - 0.35*xs**2 + 0.5) * np.exp(-OMEGA * xs**2 / 2)
 
-i = 0 # energy level
-plt.figure(figsize=[10,6])
 
+plt.figure(figsize=[10,6])
 
 start = time.time()
 for guess in [guess0, guess1, guess2, guess3, guess4]:
@@ -85,9 +85,8 @@ for guess in [guess0, guess1, guess2, guess3, guess4]:
 
         guess = soln
 
-    plt.plot(mus, ns, label=f'{i}')
-    print(f"Done {i}")
-    i += 1
+    plt.plot(mus, ns)
+    print(f"----")
 end = time.time()
 print(f"Time: {end - start}")
 
@@ -98,7 +97,6 @@ plt.ylabel(r'$N = \int |\phi|^2dx$')
 plt.xlim(0, 1.1)
 
 plt.grid()
-plt.legend()
 
 plt.show()
 
