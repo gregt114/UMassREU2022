@@ -1,9 +1,8 @@
-from hashlib import new
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.optimize import newton_krylov
-from scipy.integrate import simps
 
 from numba import jit
 
@@ -12,27 +11,26 @@ from methods.utils import norm2D as norm
 
 import time
 
-x0 = -12
-xf = 12
 
-y0 = -12
-yf = 12
-
+# Parameters
 n = 160
+OMEGA = 0.2
+TOL = 1e-5
+bc = 0 # Bondary Condition
 
-dx = (xf - x0) / n
-dy = (yf - y0) / n
 
 # Grid to solve over
+x0 = -12
+xf = 12
+y0 = -12
+yf = 12
+dx = (xf - x0) / n
+dy = (yf - y0) / n
 xs = np.linspace(x0, xf, n)
 ys = np.linspace(y0, yf, n)
 X, Y = np.meshgrid(xs, ys)
 
 
-# Bondary Conditions
-bc = 0
-
-OMEGA = 0.2
 
 
 
@@ -61,33 +59,29 @@ def f(v, mu):
 
 def main():
 
-    # Constants
+    # Range of mu to solve over
     n_mu = 40
     mu_0 = 1
     mu_f = 0
     mus = np.linspace(mu_0, mu_f, n_mu)
     
-    TOL = 1e-4 # was 1e-6
 
-    
-
-    # Ground state
+    # Ground state (n + m = 0)
     guess0 = np.exp(-OMEGA * (X**2 + Y**2) / 50)
 
-    # First Excited
-    guess1 = X * np.exp(-OMEGA * (X**2 + Y**2) / 2)
+    # n + m = 1
+    guess1 = X * np.exp(-OMEGA * (X**2 + Y**2) / 2) # First Excited
     vortex1 = (X + 1j*Y) * np.exp(-OMEGA * (X**2 + Y**2) / 2) # single vortex
 
-    # 2nd Excited
+    # n + m = 2
     blobs2 = X**2 * np.exp(-OMEGA * (X**2 + Y**2) / 2) # 2nd excited, 2 blobs + stripe in middle
     radial2 = X * Y * np.exp(-OMEGA * (X**2 + Y**2) / 2) # 2nd excited, need n >= 150 with domain (-12,12) (radially symmetric)
 
     
-    
-
     # Reshape guess   
     guesses = [guess0, guess1, vortex1, blobs2, radial2]
     guesses = [ guess.reshape(1, -1)[0] for guess in guesses]
+
 
 
     # Solve
@@ -101,9 +95,9 @@ def main():
 
         for mu in mus:
             if isComplex:
-                soln = newton(lambda x: f(x,mu), guess, TOL, method='complex')
+                soln = newton(lambda x: f(x,mu), guess, TOL, method='complex') # complex solver
             else:
-                soln = newton_krylov(lambda x : f(x,mu), guess, f_rtol=TOL)
+                soln = newton_krylov(lambda x : f(x,mu), guess, f_rtol=TOL) # real solver
             guess = soln
             normalized = norm(soln, xs, ys)
             ns.append(normalized)
