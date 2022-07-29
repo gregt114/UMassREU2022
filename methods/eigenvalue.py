@@ -12,9 +12,8 @@ def iterate_eig_full(F, guess, tol, k, method='numpy'):
     F: vector --> matrix
     guess: vector
     tol: float
-    state: int, what state to iterate over
     k: int, number of eigenvectors to compute
-    method: string
+    method: string, what method to use
     """
     if method == 'sparse':
         solver = lambda s: _sparse_solve(F, guess, tol, s, k)
@@ -34,6 +33,9 @@ def iterate_eig_full(F, guess, tol, k, method='numpy'):
     
 
 def iterate_eig(F, guess, tol, k, method='numpy'):
+    """
+    Perform iteration over 1 state rather than all
+    """
     if method == 'sparse':
         solver = lambda s: _sparse_solve(F, guess, tol, s, k)
     else:
@@ -99,6 +101,8 @@ def matrix(u):
                 M[r][c] = (1/dx**2) + (0.5*OMEGA**2)*x**2 + np.abs(u[r])**2
     return M
 
+
+# Test to make sure it works
 def main():
     
     guess = np.exp(-OMEGA * xs**2 / 2)
