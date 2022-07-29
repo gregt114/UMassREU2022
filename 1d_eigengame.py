@@ -9,12 +9,17 @@ from methods.utils import find_eigenvalues
 
 import time
 
+"""
+Takes about 4-5 minutes to run with n=500
+"""
 
 
+# Parameters
 OMEGA = 0.2
 TOL = 1e-4 # Convergence difference for solution
-n = 100 # n needs to be around 500 for accurate eigenvalues
+n = 500 # n needs to be around 500 for accurate eigenvalues
 
+# Domain to solve over
 x0 = -14
 xf = 14
 dx = (xf - x0) / n
@@ -44,17 +49,21 @@ def matrix(u):
 
 def main():
 
+    # EigenGame parameters
     k = 3
     rho = 1e-7 # 1e-7 works good I think
     alpha = 0.01
-
     state = 0 # solution number
-    iteration = 0
+
+
+
+    # Loop setup
     guess = np.exp(-OMEGA * xs**2 / 2)
-
-
     old = 100*np.ones_like(guess) # dummy value to get into loop
     eigVals = eigVecs = None
+    iteration = 0
+    
+
     start = time.time()
     while np.linalg.norm(guess - old) > TOL:
         old = guess
@@ -68,9 +77,9 @@ def main():
         iteration += 1
     print(f"Time: {time.time() - start}")
 
+
     # Get eigenvalues
     eigVals = find_eigenvalues(matrix(eigVecs.T[state]), eigVecs)
-
 
 
 
