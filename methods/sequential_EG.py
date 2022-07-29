@@ -1,3 +1,7 @@
+"""
+Implementation of sequential EigenGame
+"""
+
 import numpy as np
 from numpy.linalg import eigvalsh, eigh, cholesky, norm
 from numpy.random import randint, rand
@@ -51,15 +55,14 @@ def EigenGame(M, k, rho, alpha, mod=1, order='small'):
     """
     Compute eigenvectors of M
     M: symmetric positive definite matrix
-    V: guess matrix of eigenvectors
     k: number of eigenvectors to find
     rho: error tolerance
     alpha: step size
+    mod: how many iterations to skip between gradient calculations
     order: "smallest" to find smallest k-eigenvectors first, else largest
-    mod: how many iterations to skip the gradient calculation
     """
     M = np.ascontiguousarray(np.array(M))
-    eigVecs = rand(M.shape[0], k)
+    eigVecs = rand(M.shape[0], k) # random initiialization
 
     if order == 'small':
         M = (eigvalsh(M).max()*1.5) * np.eye(M.shape[0]) - M
@@ -74,8 +77,8 @@ def EigenGame(M, k, rho, alpha, mod=1, order='small'):
 
 def main():
     
-    n = 100
-    k = 100
+    n = 10
+    k = 10
 
     rho = 1e-6
     alpha = 0.01
