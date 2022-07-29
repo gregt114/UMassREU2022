@@ -8,16 +8,17 @@ from methods.newton import newton
 
 
 
-
+# Domain to solve over
 x0 = -24
 xf = 24
 n = 450
 xs = np.linspace(x0, xf, n)
 dx = (xf - x0) / n
 
+# Parameters
 OMEGA = 0.2
 MU = 1
-
+TOL = 1e-7
 bc = 0 # Bondary Conditions
 
 
@@ -34,6 +35,7 @@ def f(v):
         res[i] = val
 
     return res
+
 
 @jit(nopython=True)
 def jac(v):
@@ -53,12 +55,9 @@ def jac(v):
 def main():
     guess0 = np.exp(-OMEGA*xs**2 / 2)
     guess1 = 0.5*xs * np.exp(-OMEGA*xs**2 / 2)
-    guess2 = 0.18*(xs**2 - 0.333**2) * np.exp(-OMEGA * xs**2 / 2)  # but n >= 400
-    guess3 = (0.1*xs**3 - 0.75*xs) * np.exp(-OMEGA * xs**2 / 2)    # but n >= 400
-    guess4 = (0.02*xs**4 - 0.35*xs**2 + 0.5) * np.exp(-OMEGA * xs**2 / 2) # but n >= 200
-
-    # guess = guess0
-    TOL = 1e-7
+    guess2 = 0.18*(xs**2 - 0.333**2) * np.exp(-OMEGA * xs**2 / 2)  # need n >= 400
+    guess3 = (0.1*xs**3 - 0.75*xs) * np.exp(-OMEGA * xs**2 / 2)    # need n >= 400
+    guess4 = (0.02*xs**4 - 0.35*xs**2 + 0.5) * np.exp(-OMEGA * xs**2 / 2) # need n >= 200
 
 
     # Setup plotting
