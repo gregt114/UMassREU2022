@@ -12,7 +12,7 @@ from scipy.sparse import diags
 
 
 # Parameters
-n = 100
+n = 160
 OMEGA = 0.2
 MU = 0.65
 TOL = 1e-8
@@ -61,45 +61,57 @@ def f(v):
 import time
 def main():
 
-    # Guesses
-    guess0 = np.exp(-OMEGA * (X**2 + Y**2) / 2)
-    guess1 = X * np.exp(-OMEGA * (X**2 + Y**2) / 2)
-    guess2 = X * Y * np.exp(-OMEGA * (X**2 + Y**2) / 2)
-    
+    # Guesses    
+    gs0 = [np.exp(-OMEGA * (X**2 + Y**2) / 2)]
+    gs1 = [
+        X * np.exp(-OMEGA * (X**2 + Y**2) / 2),
+        Y * np.exp(-OMEGA * (X**2 + Y**2) / 2)
+    ]
+    gs2 = [
+        0.5*X**2 * np.exp(-OMEGA * (X**2 + Y**2) / 2),
+        0.5*Y**2 * np.exp(-OMEGA * (X**2 + Y**2) / 2),
+        X * Y * np.exp(-OMEGA * (X**2 + Y**2) / 2)
+        ]
 
     # Reshape guess
-    guess = guess2
-    guess = guess.reshape(1, -1)[0]
+    gs = gs0
+    gs = [g.reshape(1,-1)[0] for g in gs]
 
 
     # Solve
+    solutions = [] # list to hold solutions
     start = time.time()
-
-    soln = newton_krylov(f, guess, f_rtol=TOL, method='lgmres', verbose=True)
-    
+    for g in gs:
+        soln = newton_krylov(f, g, f_rtol=TOL, method='lgmres', verbose=True)
+        solutions.append(soln)
+        print(f"Max Residual: {np.abs(f(soln)).max()}")
+        print('----------------')
     end = time.time()
     print(f"Time: {end - start}")
-    print(f"Max Residual: {np.abs(f(soln)).max()}")
+  
 
 
-    # Prepare for plotting
-    guess = guess.reshape(n,n)
-    guess = np.abs(guess)**2
+    # Reshape and take prob. density for plotting
+    solutions = [np.abs(sol.reshape(n,n))**2 for sol in solutions]
 
-    soln = soln.reshape(n,n)
-    soln = np.abs(soln)**2
+    # Setup plotting
+    plt.figure(figsize=[12,6])
+    num_solns = len(solutions)
+    plotnum = 1
+    cmap='inferno'
 
+    # Plot each solution
+    for i in range(len(solutions)):
+        sol = solutions[i]
 
-    plt.figure(figsize=[10,6])
-    plt.subplot(1,2,1)
-    plt.imshow(guess, origin="lower", extent=(x0,xf,y0,yf))
-    plt.colorbar()
-    plt.title("Guess")
+        plt.subplot(1, num_solns, plotnum)
+        im = plt.imshow(sol, origin="lower", extent=(x0,xf,y0,yf), cmap=cmap)
+        
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.colorbar(im,fraction=0.046, pad=0.04)
+        plotnum += 1
 
-    plt.subplot(1,2,2)
-    plt.title("Solution")
-    plt.imshow(soln, origin="lower", extent=(x0,xf,y0,yf))
-    plt.colorbar()
 
 
     plt.tight_layout()
