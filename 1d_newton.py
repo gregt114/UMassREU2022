@@ -58,21 +58,21 @@ def main():
     guess2 = 0.18*(xs**2 - 0.333**2) * np.exp(-OMEGA * xs**2 / 2)  # need n >= 400
     guess3 = (0.1*xs**3 - 0.75*xs) * np.exp(-OMEGA * xs**2 / 2)    # need n >= 400
     guess4 = (0.02*xs**4 - 0.35*xs**2 + 0.5) * np.exp(-OMEGA * xs**2 / 2) # need n >= 200
-
+    gs = [guess0, guess1, guess2, guess3, guess4]
 
     # Setup plotting
     plt.figure(figsize=[10,6])
-    plotnum = 1
+    locs = [(0,0), (0,2), (0,4), (1,1), (1,3)]
 
     start = time.time()
-    for guess in [guess0, guess1, guess2, guess3, guess4]:
-        plt.subplot(2,3,plotnum)
+    for i in range(len(gs)):
+        guess = gs[i]
+        plt.subplot2grid((2,6), loc=locs[i], colspan=2)
         soln = newton(f, guess, TOL, 'numpy', jac=jac, verbose=True)
         plt.plot(xs, soln)
-        plt.title(f'State {plotnum - 1}')
+        plt.title(f'State {i}')
         plt.xlabel('x')
         plt.ylabel(r'$\phi(x)$')
-        plotnum += 1
     end = time.time()
     print(f'Time: {end - start}')
 
