@@ -16,8 +16,8 @@ Takes about 4-5 minutes to run with n=500
 
 # Parameters
 OMEGA = 0.2
-TOL = 1e-4 # Convergence difference for solution
-n = 500 # n needs to be around 500 for accurate eigenvalues
+TOL = 0.001 # Convergence difference for solution
+n = 600 # n needs to be around 500 for accurate eigenvalues
 
 # Domain to solve over
 x0 = -14
@@ -51,7 +51,7 @@ def main():
 
     # EigenGame parameters
     k = 3
-    rho = 1e-7 # 1e-7 works good I think
+    rho = 1e-8 # 1e-7 works good I think
     alpha = 0.01
     state = 0 # solution number
 
