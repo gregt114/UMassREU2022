@@ -10,7 +10,7 @@ from methods.utils import norm1D as norm
 # Parameters
 OMEGA = 0.2
 TOL = 1e-8 # Convergence difference for solution
-n = 500
+n = 900
 k = 6 # how many eigenvectors to find
 
 # Domain to solve over
