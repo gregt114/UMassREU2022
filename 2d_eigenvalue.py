@@ -14,7 +14,7 @@ import time
 
 
 # Parameters
-n = 100
+n = 160
 N =  n**2
 OMEGA = 0.2
 TOL = 1e-4
@@ -55,13 +55,17 @@ def matrix(v):
 
 def main():
 
-    k = 3 # number of eigenvectors to find
-    state = 0 # state to solve for
+    k = 6 # number of eigenvectors to find
+    state = 4 # state to solve for
 
     # Guesses
     guesses = {
         0: np.exp(-OMEGA * (X**2 + Y**2) / 2), # ground state
         1: Y * np.exp(-OMEGA * (X**2 + Y**2) / 2), # 1st excited
+        2: X * np.exp(-OMEGA * (X**2 + Y**2) / 2),
+        3: X**2 * np.exp(-OMEGA * (X**2 + Y**2) / 2), # 2nd excited
+        4: Y**2 * np.exp(-OMEGA * (X**2 + Y**2) / 2),
+        5: X*Y * np.exp(-OMEGA * (X**2 + Y**2) / 2),
     }
     guess = guesses[state]
     guess = guess.reshape(1, -1)[0]
@@ -79,12 +83,13 @@ def main():
     soln = eigVecs.T[state].reshape(n, n)
     soln = np.abs(soln)**2
 
-    plt.imshow(soln, origin="lower", extent=(x0, xf, y0, yf))
+    plt.imshow(soln, origin="lower", extent=(x0, xf, y0, yf), cmap='inferno')
 
     lamb = eigVals[state]
     plt.title(rf'$\mu$ = {lamb:.5f}')
     plt.xlabel('x')
     plt.ylabel('y')
+    plt.colorbar()
 
     plt.tight_layout()
     plt.show()
