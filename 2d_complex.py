@@ -8,10 +8,10 @@ import time
 
 
 # Parameters
-n = 150
+n = 180
 OMEGA = 0.2
-MU = 1
-TOL = 1e-5
+MU = 1.3
+TOL = 8e-4
 bc = 0 # Bondary Condition
 
 
@@ -62,17 +62,12 @@ def main():
     """
 
     
-    # Guesses
-    guess0 = np.exp(-OMEGA*X**2 /100) * np.exp(-OMEGA * Y**2 / 2) # ground state
-    
+    # Guesses    
     vortex1 = (X + 1j*Y) * np.exp(-OMEGA * (X**2 + Y**2) / 2) # single vortex
 
-    blobs2 = X**2 * np.exp(-OMEGA * (X**2 + Y**2) / 2) # 2nd excited, 2 blobs + stripe in middle
-    radial2 = X * Y * np.exp(-OMEGA * (X**2 + Y**2) / 2) # 2nd excited, need n >= 150 with domain (-12,12) (radially symmetric)
-    
 
     # Reshape guess
-    guess = vortex1
+    guess = (0.5*X) * np.exp(-OMEGA * (X**2 + Y**2) / 2) # single vortex
     guess = guess.reshape(1, -1)[0]
 
     
@@ -91,16 +86,8 @@ def main():
     soln = np.abs(soln)**2
 
     # Plot
-    cmap = "hot"
-    plt.figure(figsize=[10,6])
-    plt.subplot(1,2,1)
-    plt.imshow(guess, origin="lower", extent=(x0,xf,y0,yf), cmap=cmap)
-    plt.title("Guess")
-    plt.colorbar()
-
-    guess0 = np.exp(-OMEGA*X**2 /100) * np.exp(-OMEGA * Y**2 /100)  
-    plt.subplot(1,2,2)
-    plt.title("Solution")
+    cmap = "inferno"
+    #plt.title("Single Vortex")
     plt.imshow(soln, origin="lower", extent=(x0,xf,y0,yf), cmap=cmap)
     plt.colorbar()
 
