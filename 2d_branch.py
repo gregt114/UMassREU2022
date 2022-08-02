@@ -77,9 +77,13 @@ def main():
     blobs2 = X**2 * np.exp(-OMEGA * (X**2 + Y**2) / 2) # 2nd excited, 2 blobs + stripe in middle
     radial2 = X * Y * np.exp(-OMEGA * (X**2 + Y**2) / 2) # 2nd excited, need n >= 150 with domain (-12,12) (radially symmetric)
 
+    # n + m = 3
+    blobs3 = 0.1*(X**3) * np.exp(-OMEGA * (X**2 + Y**2) / 2) # 3rd excited, 2 small blobs + 2 stripes in middle
+    mesh3 = 0.5*(X**2 * Y) * np.exp(-OMEGA * (X**2 + Y**2) / 2) # 2x3 grid
+
     
     # Reshape guess   
-    guesses = [guess0, guess1, vortex1, blobs2, radial2]
+    guesses = [guess0, guess1, vortex1, blobs2, radial2, blobs3, mesh3]
     guesses = [ guess.reshape(1, -1)[0] for guess in guesses]
 
 
@@ -95,14 +99,15 @@ def main():
 
         for mu in mus:
             if isComplex:
-                soln = newton(lambda x: f(x,mu), guess, TOL, method='complex') # complex solver
+                soln = newton(lambda x: f(x,mu), guess, TOL, method='complex', verbose=True) # complex solver
             else:
-                soln = newton_krylov(lambda x : f(x,mu), guess, f_rtol=TOL) # real solver
+                soln = newton_krylov(lambda x : f(x,mu), guess, f_tol=TOL, verbose=True) # real solver
             guess = soln
             normalized = norm(soln, xs, ys)
             ns.append(normalized)
+        print('-----------')
 
-        plt.plot(mus, ns, label=f"{i}")
+        plt.plot(mus, ns)
         i += 1
     print(f"Time: {time.time() - start}")
 
@@ -115,7 +120,6 @@ def main():
 
 
     plt.grid()
-    plt.legend()
 
     plt.show()
 

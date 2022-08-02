@@ -14,8 +14,8 @@ from scipy.sparse import diags
 # Parameters
 n = 160
 OMEGA = 0.2
-MU = 0.65
-TOL = 1e-8
+MU = 1
+TOL = 8e-5
 bc = 0 # Bondary Condition
 
 
@@ -72,9 +72,13 @@ def main():
         0.5*Y**2 * np.exp(-OMEGA * (X**2 + Y**2) / 2),
         X * Y * np.exp(-OMEGA * (X**2 + Y**2) / 2)
         ]
+    gs3 = [
+        0.1*(X**3) * np.exp(-OMEGA * (X**2 + Y**2) / 2),
+        0.5*(X**2 * Y) * np.exp(-OMEGA * (X**2 + Y**2) / 2)
+    ]
 
     # Reshape guess
-    gs = gs0
+    gs = gs3
     gs = [g.reshape(1,-1)[0] for g in gs]
 
 
@@ -82,7 +86,7 @@ def main():
     solutions = [] # list to hold solutions
     start = time.time()
     for g in gs:
-        soln = newton_krylov(f, g, f_rtol=TOL, method='lgmres', verbose=True)
+        soln = newton_krylov(f, g, f_tol=TOL, method='lgmres', verbose=True)
         solutions.append(soln)
         print(f"Max Residual: {np.abs(f(soln)).max()}")
         print('----------------')
