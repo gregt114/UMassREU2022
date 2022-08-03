@@ -17,7 +17,7 @@ Takes about 4-5 minutes to run with n=500
 # Parameters
 OMEGA = 0.2
 TOL = 0.001 # Convergence difference for solution
-n = 600 # n needs to be around 500 for accurate eigenvalues
+n = 900 # n needs to be around 500 for accurate eigenvalues
 
 # Domain to solve over
 x0 = -14
